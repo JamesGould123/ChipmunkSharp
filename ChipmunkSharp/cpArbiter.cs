@@ -200,7 +200,7 @@ namespace ChipmunkSharp
 	/// A colliding pair of shapes.
 	public class cpArbiter
 	{
-		public ulong Key { get { return cp.CP_HASH_PAIR(a.hashid, b.hashid); } }
+		public ulong Key { get { return cp.ArbiterKey(a.hashid, b.hashid); } }
 
 		public static int CP_MAX_CONTACTS_PER_ARBITER = 4;
 

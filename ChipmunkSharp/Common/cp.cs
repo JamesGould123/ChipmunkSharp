@@ -152,6 +152,25 @@ namespace ChipmunkSharp
 			return a * CP_HASH_COEF ^ b * CP_HASH_COEF;
 		}
 
+		// Replacement for CP_HASH_PAIR as the Arbiter Key. CP_HASH_PAIR has the risk of different shape pairs
+		// producing the same value (for example ids 5467/5573 and 5471/5569), which makes two pairs share
+		// a single arbiter. Original Chipmunk resolves that by comparing the shapes.
+		// Here the two ids are packed exactly instead, smaller id in the low half so the order of the two shapes doesn't matter.
+		//
+		// Packing only stays exact while both ids fit in 32 bits (about 4.3 billion shapes added to the process, as the
+		// ids come from the static shapeIDCounter), so larger ids throw instead of silently sharing a key.
+		// Keying the cache by a (ulong, ulong) pair would remove that limit, but it changes the public types of
+		// cpSpace.cachedArbiters and cpArbiter.Key, so it would need a major version bump.
+		public static ulong ArbiterKey(ulong a, ulong b)
+		{
+			if ((a | b) > uint.MaxValue)
+			{
+				throw new OverflowException("Shape id does not fit in 32 bits, so the arbiter cache key cannot be built from it.");
+			}
+
+			return a < b ? (b << 32) | a : (a << 32) | b;
+		}
+
 		public static float PHYSICS_INFINITY { get { return Infinity; } }
 
 		public static void resetShapeIdCounter()

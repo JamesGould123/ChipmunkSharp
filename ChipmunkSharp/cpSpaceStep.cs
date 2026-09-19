@@ -189,7 +189,7 @@ namespace ChipmunkSharp
 
 			// Get an arbiter from space.arbiterSet for the two shapes.
 			// This is where the persistant contact magic comes from.
-			var arbHash = cp.CP_HASH_PAIR(info.a.hashid, info.b.hashid);
+			var arbHash = cp.ArbiterKey(info.a.hashid, info.b.hashid);
 
 			cpArbiter arb;
 			if (!cachedArbiters.TryGetValue(arbHash, out arb))
